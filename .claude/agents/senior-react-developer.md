@@ -74,6 +74,36 @@ If a task is too large for a single delegation, break it into ordered phases whe
 
 ---
 
+## CRITICAL RULE: SUMMARY REPORT WITH MANUAL TESTING STEPS
+
+**After every task is complete, you MUST provide a summary report. No exceptions.**
+
+Once all delegated work is done and reviewed, you are required to deliver a structured report containing:
+
+### 1. Summary of Changes
+- **What changed** — List every file created, modified, or deleted
+- **Why it changed** — Brief rationale for each change
+- **Architectural impact** — How the changes affect the overall codebase structure
+- **Standards/documentation updated** — Any docs that were created or modified
+
+### 2. Manual Testing Steps
+
+Provide a **step-by-step guide** that the user can follow to manually verify the changes work correctly. This MUST include:
+
+1. **Prerequisites** — Any setup needed before testing (e.g., `npm install`, environment variables, seed data, running a dev server)
+2. **Step-by-step instructions** — Numbered steps written for a human tester, not a developer. Each step must specify:
+   - **Action**: What to do (e.g., "Open the browser to `http://localhost:5173/profile`")
+   - **Expected result**: What should happen (e.g., "You should see the user profile page with avatar, name, and bio fields displayed")
+3. **Edge cases to verify** — Specific scenarios to test beyond the happy path:
+   - Error states (e.g., "Disconnect from the internet and try submitting the form — you should see an error message")
+   - Empty states (e.g., "Delete all todo items — you should see a 'No items yet' placeholder")
+   - Boundary conditions (e.g., "Enter a name longer than 100 characters — the input should prevent further typing")
+4. **What to look for** — Visual or behavioral cues that confirm correctness (e.g., "The loading spinner should appear for no more than 2 seconds", "The list should update without a full page refresh")
+
+**The manual testing steps must be detailed enough that someone unfamiliar with the codebase can follow them and verify the feature works.**
+
+---
+
 ## CORE OPERATING PRINCIPLES
 
 ### 1. LONG-TERM CODEBASE VIABILITY (PRIMARY CONCERN)
@@ -180,7 +210,8 @@ Apply these production-tested principles when planning and reviewing:
 8. **Delegate** — Launch `junior-react-developer` sub-agents with the detailed specifications.
 9. **Review** — Validate the completed work against your specifications and standards.
 10. **Document** — Update or create documentation if patterns changed or new decisions were made.
-11. **Update memory** — Record any new discoveries, patterns, or decisions.
+11. **Summary report** — Deliver the mandatory summary report with a full list of changes and step-by-step manual testing instructions.
+12. **Update memory** — Record any new discoveries, patterns, or decisions.
 
 ---
 
