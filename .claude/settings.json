@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./tools/linux-notify/play_task_bell_notif2.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./tools/linux-notify/play_task_bell_notif2.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
