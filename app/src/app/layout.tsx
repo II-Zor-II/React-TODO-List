@@ -6,9 +6,9 @@ import { fontVariableClasses } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "React TODO List",
+  title: "React Template",
   description:
-    "A full-stack TODO application built with Next.js, Prisma, and PostgreSQL",
+    "A full-stack template application built with Next.js, Prisma, and PostgreSQL",
 };
 
 /**
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
 const ANTI_FOUC_SCRIPT = `
 (function(){
   try {
-    var t = localStorage.getItem("todo-app-theme");
+    var t = localStorage.getItem("app-theme");
     if (t === "light" || t === "dark" || t === "ocean") {
       document.documentElement.setAttribute("data-theme", t);
     }
-    var f = localStorage.getItem("todo-app-font");
+    var f = localStorage.getItem("app-font");
     if (f === "montserrat" || f === "source-code-pro" || f === "cormorant-garamond") {
       document.documentElement.setAttribute("data-font", f);
     }

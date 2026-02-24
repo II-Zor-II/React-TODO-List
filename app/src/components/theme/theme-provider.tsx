@@ -31,7 +31,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
    Storage key (must match the anti-FOUC inline script in layout.tsx)
    -------------------------------------------------------------------------- */
 
-const STORAGE_KEY = "todo-app-theme";
+const STORAGE_KEY = "app-theme";
 
 /* --------------------------------------------------------------------------
    Helpers

@@ -1,8 +1,7 @@
 /* ==========================================================================
    API Types
    ==========================================================================
-   Frontend-side types for the REST v1 API envelope and domain DTOs.
-   These types mirror the backend response shapes exactly.
+   Frontend-side types for the REST v1 API envelope.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -42,88 +41,4 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
   }
-}
-
-/* --------------------------------------------------------------------------
-   Domain DTOs (matching backend response shapes)
-   -------------------------------------------------------------------------- */
-
-export type TodoStatus = "TODO" | "IN_PROGRESS" | "DONE";
-export type TodoPriority = "LOW" | "MEDIUM" | "HIGH";
-
-/**
- * TodoList as returned by the API.
- * Date fields arrive as ISO-8601 strings from JSON serialization.
- */
-export interface TodoListDto {
-  id: string;
-  name: string;
-  description: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/**
- * Todo as returned by the API.
- * Date fields arrive as ISO-8601 strings from JSON serialization.
- */
-export interface TodoDto {
-  id: string;
-  title: string;
-  description: string | null;
-  status: TodoStatus;
-  priority: TodoPriority | null;
-  dueDate: string | null;
-  createdAt: string;
-  updatedAt: string;
-  todoListId: string;
-}
-
-/**
- * Board item as returned by GET /api/v1/board/todolists.
- */
-export interface TodoStatusCounts {
-  TODO: number;
-  IN_PROGRESS: number;
-  DONE: number;
-}
-
-export interface BoardTodoListDto {
-  id: string;
-  name: string;
-  description: string | null;
-  createdAt: string;
-  updatedAt: string;
-  statusCounts: TodoStatusCounts;
-  totalTodos: number;
-}
-
-/* --------------------------------------------------------------------------
-   Mutation Input DTOs
-   -------------------------------------------------------------------------- */
-
-export interface CreateTodoListInput {
-  name: string;
-  description?: string | null;
-}
-
-export interface PatchTodoListInput {
-  name?: string;
-  description?: string | null;
-}
-
-export interface CreateTodoInput {
-  title: string;
-  description?: string | null;
-  status?: TodoStatus;
-  priority?: TodoPriority | null;
-  dueDate?: string | null;
-}
-
-export interface PatchTodoInput {
-  title?: string;
-  description?: string | null;
-  status?: TodoStatus;
-  priority?: TodoPriority | null;
-  dueDate?: string | null;
 }

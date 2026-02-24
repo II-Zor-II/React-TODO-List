@@ -29,7 +29,7 @@ const FontContext = createContext<FontContextValue | undefined>(undefined);
    Storage key (must match the anti-FOUC inline script in layout.tsx)
    -------------------------------------------------------------------------- */
 
-const STORAGE_KEY = "todo-app-font";
+const STORAGE_KEY = "app-font";
 
 /* --------------------------------------------------------------------------
    Helpers

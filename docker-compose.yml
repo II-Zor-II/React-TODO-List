@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-todoapp}
+      POSTGRES_DB: ${POSTGRES_DB:-templateapp}
     ports:
       - "0.0.0.0:5432:5432"
     volumes:
@@ -13,7 +13,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-todoapp}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-templateapp}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,10 +26,10 @@ services:
     ports:
       - "0.0.0.0:3000:3000"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-todoapp}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-templateapp}?schema=public
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-todoapp}
+      POSTGRES_DB: ${POSTGRES_DB:-templateapp}
       DB_HOST: db
       DB_PORT: 5432
     depends_on:
@@ -50,7 +50,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: todoapp_test
+      POSTGRES_DB: templateapp_test
     ports:
       - "0.0.0.0:5433:5432"
     volumes:
@@ -58,7 +58,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d todoapp_test"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d templateapp_test"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -72,10 +72,10 @@ services:
     ports:
       - "0.0.0.0:3001:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db-test:5432/todoapp_test?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@db-test:5432/templateapp_test?schema=public
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: todoapp_test
+      POSTGRES_DB: templateapp_test
       DB_HOST: db-test
       DB_PORT: 5432
     depends_on:
