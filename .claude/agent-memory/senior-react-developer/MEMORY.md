@@ -9,7 +9,7 @@
 ## Key Paths
 - `/app/` - Next.js application root
 - `/app/prisma/schema.prisma` - Database schema
-- `/app/prisma/seed.ts` - Idempotent seed script (upsert by unique email)
+- `/app/prisma/seed.ts` - Idempotent seed script (upsert by unique email + stable IDs)
 - `/app/src/app/` - Next.js App Router pages
 - `/app/src/styles/tokens.css` - Primitive design tokens (CSS custom properties)
 - `/app/src/styles/themes.css` - Theme variants (light/dark/ocean via data-theme)
@@ -19,6 +19,10 @@
 - `/app/src/features/todos/` - Todo feature module (types, mock-data, components)
 - `/docker/Dockerfile` - App container image (node:22-alpine)
 - `/docker/entrypoint.sh` - Startup orchestration
+- `/app/src/lib/prisma.ts` - Singleton PrismaClient (hot-reload safe via globalThis)
+- `/app/src/server/shared/` - Shared server utilities (http-errors, http-response, pagination)
+- `/app/src/server/todos/` - Todo domain (types, validators, repository, service)
+- `/app/src/app/api/v1/` - REST v1 API route handlers
 - `/docker-compose.yml` - Services: `app` (port 3000) and `db` (port 5432)
 - `/.env.example` - Environment variable template
 
@@ -44,13 +48,32 @@
 - Focus-visible ring pattern for keyboard navigation
 - Mobile-first responsive with 2k/4k breakpoints (font scaling + max-width caps)
 
+## Backend Architecture (v1 API)
+- **Layered architecture**: Route Handler -> Service -> Repository -> Prisma
+- **REST v1 endpoints** under `/api/v1/` with versioned URL prefix
+- **Response envelope**: `{ data, error: { message, details? }, meta? }` on all endpoints
+- **Zod validation** on all route inputs (body and params)
+- **Soft-delete strategy**: `deletedAt` column, list deletion cascades to todos in transaction
+- **Prisma singleton** at `@/lib/prisma` using globalThis for hot-reload safety
+- **Pagination**: Zod-parsed query params, `PaginationMeta` in response envelope
+- **Board endpoint**: Per-list status counts, search/sort/filter, in-memory sort for `totalTodos`
+- **Param validation**: Use `z.string().min(1)` NOT `.cuid()` -- seed uses stable human-readable IDs
+- **Seed IDs**: Format `seed-list-*` and `seed-todo-*` for idempotent upsert (NOT valid CUIDs)
+- **HTTP error classes**: HttpError base class with typed subclasses, caught by handleRouteError()
+- **Next.js 15 route context**: `params` is a Promise (must `await context.params`)
+
 ## Dependencies Added
 - `clsx` + `tailwind-merge` -> combined in `cn()` utility at `@/lib/ui/cn`
 - `class-variance-authority` -> variant management for UI primitives
+- `zod` -> runtime validation for API request/response
 
 ## Known Issues / Debt
 - `.next` dir may get root-owned when Docker creates it; need `chown` in entrypoint or Docker config
+- `npm run lint` fails on host due to root-owned `.next/cache/eslint/`; workaround: `npx eslint --no-cache src/`
 - Favicon.ico missing (benign 404 in browser console)
 - Prisma `package.json#prisma` config deprecated -- migrate to `prisma.config.ts` for Prisma 7
+- Docker `app_node_modules` volume requires separate `prisma generate` + `npm install` inside container after host changes
+- After modifying source files on host, Docker app container may need restart to pick up changes
 - No `CODING_STANDARDS.md`, `ARCHITECTURE.md`, or `COMPONENT_GUIDELINES.md` created yet
 - No testing framework installed -- plan to add vitest + RTL
+- Frontend types at `src/features/todos/types.ts` diverge from backend types -- will need reconciliation when frontend consumes API
