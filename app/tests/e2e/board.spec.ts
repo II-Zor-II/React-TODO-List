@@ -19,8 +19,8 @@ test.describe("Board Page", () => {
 
   test("displays status count badges on list cards", async ({ page }) => {
     // Sprint Backlog has: 2 TODO, 1 IN_PROGRESS, 1 DONE = 4 tasks total
-    const sprintCard = page.getByText("Sprint Backlog").locator("..").locator("..");
-    await expect(sprintCard.getByText("4 tasks total")).toBeVisible();
+    const sprintCard = page.getByRole("link", { name: /Sprint Backlog/ });
+    await expect(sprintCard.getByText(/4\s+tasks?\s+total/)).toBeVisible();
   });
 
   test("search filters lists", async ({ page }) => {

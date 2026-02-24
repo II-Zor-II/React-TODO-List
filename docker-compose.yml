@@ -41,6 +41,52 @@ services:
     networks:
       - app-network
 
+  # --- Test services (activate with: docker compose --profile test up -d) ---
+
+  db-test:
+    image: postgres:17-alpine
+    profiles: [test]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todoapp_test
+    ports:
+      - "0.0.0.0:5433:5432"
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d todoapp_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app-test:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    profiles: [test]
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:3001:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db-test:5432/todoapp_test?schema=public
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todoapp_test
+      DB_HOST: db-test
+      DB_PORT: 5432
+    depends_on:
+      db-test:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+      - app_test_node_modules:/app/node_modules
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
@@ -48,3 +94,5 @@ networks:
 volumes:
   pgdata:
   app_node_modules:
+  pgdata_test:
+  app_test_node_modules:

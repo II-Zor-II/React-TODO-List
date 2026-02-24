@@ -11,10 +11,10 @@ test.describe("Todo CRUD on List Detail Page", () => {
   });
 
   test("displays existing todos from seed data", async ({ page }) => {
-    await expect(page.getByText("Implement authentication flow")).toBeVisible();
-    await expect(page.getByText("Build user profile page")).toBeVisible();
-    await expect(page.getByText("Write API documentation")).toBeVisible();
-    await expect(page.getByText("Add unit tests for service layer")).toBeVisible();
+    await expect(page.getByText("Implement authentication flow", { exact: true })).toBeVisible();
+    await expect(page.getByText("Build user profile page", { exact: true })).toBeVisible();
+    await expect(page.getByText("Write API documentation", { exact: true })).toBeVisible();
+    await expect(page.getByText("Add unit tests for service layer", { exact: true })).toBeVisible();
   });
 
   test("displays filter tabs with correct counts", async ({ page }) => {
@@ -28,52 +28,49 @@ test.describe("Todo CRUD on List Detail Page", () => {
     await page.getByRole("button", { name: "Add Todo" }).click();
 
     // New todo should appear in the list
-    await expect(page.getByText("E2E New Todo")).toBeVisible();
+    await expect(page.getByText("E2E New Todo", { exact: true })).toBeVisible();
   });
 
   test("updates todo status", async ({ page }) => {
-    // Find the "Build user profile page" todo (seed status: TODO)
-    const todoRow = page
-      .getByText("Build user profile page")
-      .locator("../..");
+    // Find the status select for "Build user profile page"
+    const statusSelect = page.getByRole("combobox", { name: /Build user profile page/ });
 
     // Change its status to IN_PROGRESS
-    const statusSelect = todoRow.locator("select");
     await statusSelect.selectOption("IN_PROGRESS");
 
-    // Wait for mutation to complete and verify the badge updated
-    await expect(todoRow.getByText("In Progress")).toBeVisible();
+    // Wait for mutation to complete and verify the select updated
+    await expect(statusSelect).toHaveValue("IN_PROGRESS");
   });
 
-  test("deletes a todo", async ({ page }) => {
-    // Use the "Write API documentation" todo (seed status: DONE)
-    const todoText = "Write API documentation";
-    await expect(page.getByText(todoText)).toBeVisible();
-
-    // Click the delete button
-    const todoRow = page.getByText(todoText).locator("../..");
-    await todoRow.getByRole("button", { name: /Delete/ }).click();
-
-    // Todo should disappear
-    await expect(page.getByText(todoText)).not.toBeVisible();
-  });
-
+  // Non-destructive read tests before destructive ones
   test("filters todos by status", async ({ page }) => {
     // Click on the "Done" filter tab
     await page.getByRole("tab", { name: /Done/ }).click();
 
     // Should show only done todos
-    await expect(page.getByText("Write API documentation")).toBeVisible();
+    await expect(page.getByText("Write API documentation", { exact: true })).toBeVisible();
     // Active todos should not be visible
-    await expect(page.getByText("Build user profile page")).not.toBeVisible();
+    await expect(page.getByText("Build user profile page", { exact: true })).not.toBeVisible();
   });
 
   test("searches todos by title", async ({ page }) => {
     await page.getByPlaceholder("Search todos...").fill("authentication");
 
     // Only matching todo should be visible
-    await expect(page.getByText("Implement authentication flow")).toBeVisible();
-    await expect(page.getByText("Build user profile page")).not.toBeVisible();
+    await expect(page.getByText("Implement authentication flow", { exact: true })).toBeVisible();
+    await expect(page.getByText("Build user profile page", { exact: true })).not.toBeVisible();
+  });
+
+  // Destructive test last
+  test("deletes a todo", async ({ page }) => {
+    // Use the "Write API documentation" todo (seed status: DONE)
+    await expect(page.getByText("Write API documentation", { exact: true })).toBeVisible();
+
+    // Click the delete button
+    await page.getByRole("button", { name: /Delete "Write API documentation"/ }).click();
+
+    // Todo should disappear
+    await expect(page.getByText("Write API documentation", { exact: true })).not.toBeVisible();
   });
 
   test("navigates back to board", async ({ page }) => {

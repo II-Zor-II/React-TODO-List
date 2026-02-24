@@ -7,6 +7,7 @@ import { defineConfig, devices } from "@playwright/test";
  * DB reset (prisma migrate reset + seed) should be performed before running.
  */
 export default defineConfig({
+  globalSetup: "./tests/e2e/global-setup.ts",
   testDir: "./tests/e2e",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -16,9 +17,12 @@ export default defineConfig({
   timeout: 30_000,
 
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3001",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    launchOptions: {
+      slowMo: Number(process.env.SLOW_MO) || 0,
+    },
   },
 
   projects: [
