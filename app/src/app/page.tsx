@@ -1,74 +1,51 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useCallback } from "react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { FontToggle } from "@/components/font/font-toggle";
-import { TodoComposer } from "@/features/todos/components/todo-composer";
-import { TodoFilters } from "@/features/todos/components/todo-filters";
-import { TodoList } from "@/features/todos/components/todo-list";
-import { MOCK_TODOS } from "@/features/todos/mock-data";
-import type { FilterStatus, Priority, Todo } from "@/features/todos/types";
+import { Button } from "@/components/ui/button";
+import { useBoardTodoLists } from "@/features/todolists/api/queries";
+import { BoardCard } from "@/features/todolists/components/board-card";
+import { BoardToolbar } from "@/features/todolists/components/board-toolbar";
+import { BoardPagination } from "@/features/todolists/components/board-pagination";
+import { CreateListModal } from "@/features/todolists/components/create-list-modal";
 
 /* --------------------------------------------------------------------------
    Page Component
    -------------------------------------------------------------------------- */
 
 export default function HomePage() {
-  const [todos, setTodos] = useState<Todo[]>(MOCK_TODOS);
-  const [filter, setFilter] = useState<FilterStatus>("all");
+  /* --- Board state --- */
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  /* --- Derived state --- */
+  /* --- Debounced search: reset to page 1 on search change --- */
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    setPage(1);
+  }, []);
 
-  const counts = useMemo<Record<FilterStatus, number>>(
-    () => ({
-      all: todos.length,
-      active: todos.filter((t) => !t.completed).length,
-      completed: todos.filter((t) => t.completed).length,
-    }),
-    [todos]
-  );
+  const handleSortByChange = useCallback((value: string) => {
+    setSortBy(value);
+    setPage(1);
+  }, []);
 
-  const filteredTodos = useMemo(() => {
-    let result = todos;
+  const handleSortDirectionToggle = useCallback(() => {
+    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    setPage(1);
+  }, []);
 
-    // Status filter
-    if (filter === "active") {
-      result = result.filter((t) => !t.completed);
-    } else if (filter === "completed") {
-      result = result.filter((t) => t.completed);
-    }
-
-    // Text search
-    const query = searchQuery.trim().toLowerCase();
-    if (query) {
-      result = result.filter((t) =>
-        t.title.toLowerCase().includes(query)
-      );
-    }
-
-    return result;
-  }, [todos, filter, searchQuery]);
-
-  /* --- Handlers --- */
-
-  function handleToggle(id: string) {
-    setTodos((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
-    );
-  }
-
-  function handleAdd(title: string, priority: Priority) {
-    const newTodo: Todo = {
-      id: `todo-${Date.now()}`,
-      title,
-      completed: false,
-      createdAt: new Date(),
-      priority,
-    };
-    setTodos((prev) => [newTodo, ...prev]);
-  }
+  /* --- Data fetching --- */
+  const { data, isLoading, isError, error } = useBoardTodoLists({
+    search: searchQuery || undefined,
+    sortBy: sortBy as "name" | "createdAt" | "updatedAt" | "totalTodos",
+    sortDirection,
+    page,
+    limit: 20,
+  });
 
   /* --- Render --- */
 
@@ -81,10 +58,10 @@ export default function HomePage() {
             id="app-heading"
             className="text-2xl font-bold tracking-tight text-text sm:text-3xl"
           >
-            TODO List
+            My Lists
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            {counts.active} {counts.active === 1 ? "task" : "tasks"} remaining
+            Organize your tasks into lists
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -93,27 +70,77 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Add new todo */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Add a Task</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TodoComposer onAdd={handleAdd} />
-        </CardContent>
-      </Card>
+      {/* Toolbar: search + sort + create */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <BoardToolbar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          sortBy={sortBy}
+          onSortByChange={handleSortByChange}
+          sortDirection={sortDirection}
+          onSortDirectionToggle={handleSortDirectionToggle}
+        />
+        <Button onClick={() => setIsCreateModalOpen(true)}>
+          + New List
+        </Button>
+      </div>
 
-      {/* Filters */}
-      <TodoFilters
-        filter={filter}
-        onFilterChange={setFilter}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        counts={counts}
+      {/* Board content */}
+      {isLoading && (
+        <div
+          role="status"
+          className="flex items-center justify-center py-12"
+        >
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-primary" />
+          <span className="sr-only">Loading lists...</span>
+        </div>
+      )}
+
+      {isError && (
+        <div
+          role="alert"
+          className="rounded-lg border border-error/30 bg-error-light p-6 text-center"
+        >
+          <p className="font-medium text-error">Failed to load lists</p>
+          <p className="mt-1 text-sm text-text-muted">
+            {error.message}
+          </p>
+        </div>
+      )}
+
+      {data && data.items.length === 0 && (
+        <div
+          role="status"
+          className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border px-6 py-12 text-center"
+        >
+          <p className="text-lg font-medium text-text-muted">
+            No lists found
+          </p>
+          <p className="text-sm text-text-muted">
+            {searchQuery
+              ? "Try a different search term."
+              : "Create your first list to get started."}
+          </p>
+        </div>
+      )}
+
+      {data && data.items.length > 0 && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {data.items.map((list) => (
+              <BoardCard key={list.id} list={list} />
+            ))}
+          </div>
+
+          <BoardPagination meta={data.meta} onPageChange={setPage} />
+        </>
+      )}
+
+      {/* Create list modal */}
+      <CreateListModal
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
       />
-
-      {/* Todo list */}
-      <TodoList todos={filteredTodos} onToggle={handleToggle} />
     </section>
   );
 }

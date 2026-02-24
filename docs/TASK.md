@@ -1,76 +1,63 @@
-# Scalable Backend Architecture Task List (TODO Domain)
+# Frontend-Backend Integration Task List
 
 ## Goal
-Design and implement a scalable, maintainable backend architecture for TODO lists with proper REST method usage, including:
-- create a todo list
-- manage todos inside a todo list
-- expose a board endpoint for all todo lists
-- include Prisma migration + seed updates
+Connect the frontend to the existing TODO backend APIs, remove mock runtime data usage, add a general TodoList board view, and enable reliable host-based e2e testing.
 
 ## Locked Decisions
-- API style: REST v1 (`/api/v1/...`)
-- Ownership model (v1): Global shared (no auth ownership yet)
-- Delete policy: Soft delete (`deletedAt`)
-- Todo lifecycle: Enum status (`TODO`, `IN_PROGRESS`, `DONE`)
-- Update method policy: Support both `PATCH` (partial) and `PUT` (full replacement)
-- Board response: Paginated + filterable
-- Request validation: Zod schemas
-- Response contract: Standard envelope (`data/error/meta`)
-- Auth timing: No auth in v1 (architecture must be auth-ready)
+- Routing: route-based UI.
+- Root route: `/` is TodoList board.
+- Detail route: `/todolists/[listId]` shows todos for one list.
+- Data strategy: Server Components for initial load + TanStack Query for client mutations/cache.
+- Create-list UX: modal dialog.
+- Todo status UX: full 3-state (`TODO`, `IN_PROGRESS`, `DONE`).
+- E2E framework: Playwright.
+- E2E runtime: host Node via `nvm` + Docker PostgreSQL only.
+- E2E DB reset: `prisma migrate reset --force` + seed before suite.
+- Initial browser target: Chromium.
 
 ## Scope
 ### In Scope
-- Add backend folder architecture (route handlers, validators, services, repositories, shared utils)
-- Add Prisma schema for `TodoList` and `Todo`, relations, enums, indexes, soft-delete fields
-- Generate/commit migration for TODO domain
-- Update seed with idempotent sample todo lists + todos
-- Implement REST endpoints with correct HTTP method semantics and status codes
-- Implement board endpoint with pagination/filter/sort and summary counts
-- Add backend docs in `README.md`
+- Integrate frontend with `/api/v1` endpoints.
+- Build general TodoList board view.
+- Build TodoList detail view with todo CRUD and status changes.
+- Replace mock runtime flow with real API data flow.
+- Add query/mutation hooks and shared API client types.
+- Add host-based Playwright e2e setup and critical path tests.
+- Update docs for local/e2e workflow.
 
 ### Out of Scope
-- Authentication/authorization implementation
-- Realtime updates/websockets
-- Production observability stack
+- Auth/authorization.
+- Realtime sync.
+- Cross-browser e2e matrix in phase 1.
 
 ## Implementation Checklist
-- [ ] Add route handlers:
-  - [ ] `GET/POST /api/v1/todolists`
-  - [ ] `GET/PATCH/PUT/DELETE /api/v1/todolists/:listId`
-  - [ ] `GET/POST /api/v1/todolists/:listId/todos`
-  - [ ] `GET/PATCH/PUT/DELETE /api/v1/todos/:todoId`
-  - [ ] `GET /api/v1/board/todolists`
-- [ ] Add backend architecture folders under `src/server`:
-  - [ ] `todos.repository.ts`
-  - [ ] `todos.service.ts`
-  - [ ] `todos.validators.ts`
-  - [ ] `todos.types.ts`
-  - [ ] shared error/response/pagination helpers
-- [ ] Add Prisma enums/models:
-  - [ ] `TodoStatus`, `TodoPriority`
-  - [ ] `TodoList` with soft-delete
-  - [ ] `Todo` with soft-delete + relation to `TodoList`
-- [ ] Add indexes for scalable list/todo queries
-- [ ] Generate and commit migration SQL
-- [ ] Update seed script with idempotent todo lists + todos
-- [ ] Enforce standard API response envelope and domain error mapping
-- [ ] Add/update README API documentation
-- [ ] Validate lint/build and endpoint behavior
+- [ ] Create API client layer under `app/src/lib/api`.
+- [ ] Add shared API envelope and domain DTO types.
+- [ ] Add query hooks for board, list detail, and todos.
+- [ ] Add mutation hooks for create/update/delete todolist and todo.
+- [ ] Replace `app/src/app/page.tsx` with API-driven TodoList board.
+- [ ] Add `app/src/app/todolists/[listId]/page.tsx` for list detail.
+- [ ] Add board components (cards, filters, pagination, empty/error states).
+- [ ] Add create-list modal and wire to `POST /api/v1/todolists`.
+- [ ] Refactor todo UI to use backend `status` model instead of `completed` boolean.
+- [ ] Remove runtime dependency on `MOCK_TODOS`.
+- [ ] Ensure optimistic/pessimistic updates and cache invalidation strategy is consistent.
+- [ ] Add Playwright config + e2e test specs.
+- [ ] Add npm scripts for e2e DB up/reset/run.
+- [ ] Update README with integration and e2e instructions.
 
 ## Acceptance Criteria
-- [ ] CRUD endpoints exist and use correct HTTP methods/status codes
-- [ ] `PATCH` and `PUT` both implemented with distinct behavior
-- [ ] Board endpoint supports pagination + filtering + sorting
-- [ ] Prisma migration creates TODO schema successfully
-- [ ] Soft-delete works for lists and todos
-- [ ] Seed creates todo lists and todos idempotently
-- [ ] API responses follow consistent envelope
-- [ ] `npm run lint` and `npm run build` pass
+- [ ] `/` shows API-backed board of todo lists.
+- [ ] User can create a todo list from board modal.
+- [ ] User can open a list and manage todos via backend APIs.
+- [ ] Todo status uses full 3-state model in UI and API payloads.
+- [ ] Mock data is no longer used in runtime screens.
+- [ ] Core e2e flow passes on host Node + Docker DB.
 
 ## Verification Scenarios
-1. Create todo list via `POST /api/v1/todolists`, then fetch with `GET`.
-2. Create todos under a list via `POST /api/v1/todolists/:listId/todos`.
-3. Update with `PATCH` (partial) and `PUT` (full payload) and confirm behavior differences.
-4. Soft-delete todo and todo list; confirm deleted items are hidden by default.
-5. Query board endpoint with pagination/filter/sort and verify metadata.
-6. Re-run seed and verify no uncontrolled duplicates.
+1. Load `/` and verify board data comes from `/api/v1/board/todolists`.
+2. Create list in modal and verify it appears without manual refresh.
+3. Open list detail and create todo.
+4. Change todo status `TODO -> IN_PROGRESS -> DONE`.
+5. Delete todo/list and verify soft-delete behavior from UI perspective.
+6. Run e2e with host node and Docker DB reset workflow.

@@ -9,14 +9,14 @@ import { TodoItem } from "./todo-item";
 
 interface TodoListProps {
   todos: Todo[];
-  onToggle: (id: string) => void;
+  listId: string;
 }
 
 /* --------------------------------------------------------------------------
    Component
    -------------------------------------------------------------------------- */
 
-export function TodoList({ todos, onToggle }: TodoListProps) {
+export function TodoList({ todos, listId }: TodoListProps) {
   if (todos.length === 0) {
     return (
       <div
@@ -35,7 +35,7 @@ export function TodoList({ todos, onToggle }: TodoListProps) {
     <ul aria-label="Todo list" className="flex flex-col gap-2">
       {todos.map((todo) => (
         <li key={todo.id}>
-          <TodoItem todo={todo} onToggle={onToggle} />
+          <TodoItem todo={todo} listId={listId} />
         </li>
       ))}
     </ul>

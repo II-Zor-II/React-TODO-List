@@ -11,12 +11,19 @@
 - `/app/prisma/schema.prisma` - Database schema
 - `/app/prisma/seed.ts` - Idempotent seed script (upsert by unique email + stable IDs)
 - `/app/src/app/` - Next.js App Router pages
+- `/app/src/app/page.tsx` - Board page (lists all TodoLists)
+- `/app/src/app/todolists/[listId]/page.tsx` - TodoList detail page with todo CRUD
 - `/app/src/styles/tokens.css` - Primitive design tokens (CSS custom properties)
 - `/app/src/styles/themes.css` - Theme variants (light/dark/ocean via data-theme)
 - `/app/src/lib/ui/cn.ts` - clsx + tailwind-merge utility
+- `/app/src/lib/api/client.ts` - Generic API fetch wrapper (apiFetch, apiFetchPaginated)
+- `/app/src/lib/api/types.ts` - API envelope types and domain DTOs
+- `/app/src/lib/api/mappers.ts` - DTO-to-model mappers (date string -> Date)
 - `/app/src/components/ui/` - Reusable UI primitives (button, card, input, badge, checkbox)
 - `/app/src/components/theme/` - ThemeProvider + ThemeToggle
-- `/app/src/features/todos/` - Todo feature module (types, mock-data, components)
+- `/app/src/components/providers/query-provider.tsx` - TanStack Query client provider
+- `/app/src/features/todolists/` - TodoList feature module (types, api/, components/)
+- `/app/src/features/todos/` - Todo feature module (types, api/, components/)
 - `/docker/Dockerfile` - App container image (node:22-alpine)
 - `/docker/entrypoint.sh` - Startup orchestration
 - `/app/src/lib/prisma.ts` - Singleton PrismaClient (hot-reload safe via globalThis)
@@ -32,10 +39,16 @@
 - **Theme switching**: `data-theme` attribute on `<html>`, localStorage persistence, anti-FOUC inline script
 - **UI primitives**: Use CVA (class-variance-authority) for variants, `cn()` for merging, `forwardRef` for refs
 - **Component naming**: PascalCase components, kebab-case files
-- **Feature modules**: `/features/{name}/` with types.ts, mock-data.ts, components/ subdirectory
+- **Feature modules**: `/features/{name}/` with types.ts, api/{queries,mutations}.ts, components/
+- **Async state management**: TanStack React Query v5 for all server state, no global state store
+- **API client pattern**: `apiFetch<T>()` and `apiFetchPaginated<T>()` in `@/lib/api/client`
+- **Query key convention**: `todoListKeys.all`, `todoListKeys.board(params)`, `todoKeys.byList(id)`
+- **Cache invalidation**: Mutations invalidate relevant query keys via `queryClient.invalidateQueries()`
+- **Frontend types match backend**: TodoStatus = "TODO"|"IN_PROGRESS"|"DONE", TodoPriority = "LOW"|"MEDIUM"|"HIGH"
 - **Prisma seed config**: Uses `package.json#prisma.seed` field
 - **DB wait strategy**: Shell loop with `pg_isready` in entrypoint.sh
 - **Docker volumes**: `pgdata` for DB persistence, `app_node_modules` for dep caching, `./app:/app` bind mount
+- **Playwright e2e**: Runs on host Node, DB in Docker. Config excluded from Next.js tsconfig.
 
 ## Conventions Established
 - Named exports for components; default exports only for route-level pages
@@ -47,6 +60,9 @@
 - Semantic HTML with ARIA attributes for accessibility
 - Focus-visible ring pattern for keyboard navigation
 - Mobile-first responsive with 2k/4k breakpoints (font scaling + max-width caps)
+- Loading states: spinning border div with sr-only text
+- Error states: bordered alert div with error color tokens
+- Empty states: dashed border div with muted text
 
 ## Backend Architecture (v1 API)
 - **Layered architecture**: Route Handler -> Service -> Repository -> Prisma
@@ -62,18 +78,21 @@
 - **HTTP error classes**: HttpError base class with typed subclasses, caught by handleRouteError()
 - **Next.js 15 route context**: `params` is a Promise (must `await context.params`)
 
-## Dependencies Added
+## Dependencies
 - `clsx` + `tailwind-merge` -> combined in `cn()` utility at `@/lib/ui/cn`
 - `class-variance-authority` -> variant management for UI primitives
 - `zod` -> runtime validation for API request/response
+- `@tanstack/react-query` v5 -> server state management
+- `@playwright/test` (devDependency) -> e2e testing
 
 ## Known Issues / Debt
-- `.next` dir may get root-owned when Docker creates it; need `chown` in entrypoint or Docker config
-- `npm run lint` fails on host due to root-owned `.next/cache/eslint/`; workaround: `npx eslint --no-cache src/`
+- `.next` dir may get root-owned when Docker creates it; workaround: build inside Docker (`docker compose exec app npm run build`)
+- `npm run lint` on host fails due to root-owned `.next/cache/eslint/`; workaround: `npx eslint --no-cache src/`
+- `npm run build` on host fails due to root-owned `.next/`; workaround: build inside Docker container
+- Docker `app_node_modules` volume is separate; must `npm install` inside container after adding host deps
 - Favicon.ico missing (benign 404 in browser console)
 - Prisma `package.json#prisma` config deprecated -- migrate to `prisma.config.ts` for Prisma 7
-- Docker `app_node_modules` volume requires separate `prisma generate` + `npm install` inside container after host changes
-- After modifying source files on host, Docker app container may need restart to pick up changes
 - No `CODING_STANDARDS.md`, `ARCHITECTURE.md`, or `COMPONENT_GUIDELINES.md` created yet
-- No testing framework installed -- plan to add vitest + RTL
-- Frontend types at `src/features/todos/types.ts` diverge from backend types -- will need reconciliation when frontend consumes API
+- No vitest/RTL unit tests yet -- only Playwright e2e
+- `tsconfig.json` excludes `playwright.config.ts` and `tests/` to avoid build conflicts
+- mock-data.ts has been deleted; no more runtime mock dependency

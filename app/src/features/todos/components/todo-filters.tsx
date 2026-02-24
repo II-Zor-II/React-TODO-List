@@ -1,18 +1,18 @@
 "use client";
 
 import { cn } from "@/lib/ui/cn";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { FilterStatus } from "../types";
 
 /* --------------------------------------------------------------------------
-   Filter tab definitions
+   Filter tab definitions -- aligned with backend 3-state model
    -------------------------------------------------------------------------- */
 
 const FILTER_TABS: { value: FilterStatus; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "active", label: "Active" },
-  { value: "completed", label: "Completed" },
+  { value: "TODO", label: "Todo" },
+  { value: "IN_PROGRESS", label: "In Progress" },
+  { value: "DONE", label: "Done" },
 ];
 
 /* --------------------------------------------------------------------------
@@ -45,7 +45,7 @@ export function TodoFilters({
       <div
         role="tablist"
         aria-label="Filter todos"
-        className="inline-flex items-center gap-1 rounded-lg bg-surface-alt p-1"
+        className="inline-flex flex-wrap items-center gap-1 rounded-lg bg-surface-alt p-1"
       >
         {FILTER_TABS.map((tab) => (
           <button

@@ -1,16 +1,23 @@
 /* ==========================================================================
-   Todo Domain Types
+   Todo Domain Types (Frontend)
+   ==========================================================================
+   Aligned with backend Prisma models and API DTOs.
    ========================================================================== */
 
-export type Priority = "low" | "medium" | "high";
+export type TodoStatus = "TODO" | "IN_PROGRESS" | "DONE";
+export type TodoPriority = "LOW" | "MEDIUM" | "HIGH";
 
 export interface Todo {
   id: string;
   title: string;
-  completed: boolean;
+  description: string | null;
+  status: TodoStatus;
+  priority: TodoPriority | null;
+  dueDate: Date | null;
   createdAt: Date;
-  priority: Priority;
+  updatedAt: Date;
+  todoListId: string;
 }
 
-/** Filter tabs for the todo list */
-export type FilterStatus = "all" | "active" | "completed";
+/** Filter tabs for the todo list -- includes "all" plus backend status values */
+export type FilterStatus = "all" | TodoStatus;

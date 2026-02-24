@@ -1,42 +1,39 @@
 "use client";
 
-import { cn } from "@/lib/ui/cn";
 import { FONT_DEFINITIONS } from "@/lib/fonts";
 import { useFont } from "./font-provider";
 
 /* --------------------------------------------------------------------------
-   FontToggle
+   FontToggle – compact dropdown
    -------------------------------------------------------------------------- */
 
 export function FontToggle() {
   const { font, setFont } = useFont();
 
   return (
-    <div
-      role="radiogroup"
-      aria-label="Select font"
-      className="inline-flex items-center gap-1 rounded-lg bg-surface-alt p-1"
-    >
-      {FONT_DEFINITIONS.map((f) => (
-        <button
-          key={f.key}
-          role="radio"
-          aria-checked={font === f.key}
-          aria-label={`${f.label} font`}
-          onClick={() => setFont(f.key)}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium",
-            "transition-colors duration-150",
-            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-            font === f.key
-              ? "bg-surface text-text shadow-sm"
-              : "text-text-muted hover:text-text"
-          )}
-        >
-          <span aria-hidden="true">{f.icon}</span>
-          <span className="hidden sm:inline">{f.label}</span>
-        </button>
-      ))}
+    <div className="relative inline-flex items-center">
+      <label htmlFor="font-select" className="sr-only">
+        Select font
+      </label>
+      <select
+        id="font-select"
+        value={font}
+        onChange={(e) => setFont(e.target.value as typeof font)}
+        className="appearance-none rounded-lg bg-surface-alt px-3 py-1.5 pr-7 text-sm font-medium text-text-muted transition-colors duration-150 hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        {FONT_DEFINITIONS.map((f) => (
+          <option key={f.key} value={f.key}>
+            {f.label}
+          </option>
+        ))}
+      </select>
+      {/* Dropdown chevron */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-2 text-xs text-text-muted"
+      >
+        ▾
+      </span>
     </div>
   );
 }

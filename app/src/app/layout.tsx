@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { FontProvider } from "@/components/font/font-provider";
 import { fontVariableClasses } from "@/lib/fonts";
@@ -46,13 +47,15 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-bg text-text antialiased transition-colors duration-200">
-        <ThemeProvider>
-          <FontProvider>
-            <div className="mx-auto w-full max-w-4xl px-4 py-8 2k:max-w-5xl 4k:max-w-7xl">
-              {children}
-            </div>
-          </FontProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <FontProvider>
+              <div className="mx-auto w-full max-w-4xl px-4 py-8 2k:max-w-5xl 4k:max-w-7xl">
+                {children}
+              </div>
+            </FontProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
