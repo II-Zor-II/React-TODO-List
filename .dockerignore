@@ -1,0 +1,36 @@
+# Dependencies
+app/node_modules
+
+# Next.js build
+app/.next
+
+# Environment files (composed at runtime)
+.env
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Documentation (not needed in image)
+*.md
+docs/
+AGENTS.md
+CLAUDE.md
+
+# Claude config
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Tools and assets (not needed in image)
+tools/
+assets/

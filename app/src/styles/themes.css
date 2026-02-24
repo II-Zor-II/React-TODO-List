@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Theme Variants
+   ==========================================================================
+   Each theme reassigns semantic and component tokens.
+   Switched via `data-theme` attribute on <html>.
+
+   Semantic roles:
+     primary       - Main brand / action color
+     secondary     - Supporting actions
+     tertiary      - Tertiary accent
+     complementary - Complementary / warm accent
+     accent        - Highlight / decorative accent
+     neutral       - Text and border grays
+     success       - Positive feedback
+     warning       - Caution feedback
+     error         - Negative feedback
+
+   Component tokens:
+     bg            - Page background
+     surface       - Card / elevated surface background
+     surface-alt   - Alternate surface (e.g. input bg)
+     text          - Primary text
+     text-muted    - Secondary / helper text
+     border        - Default border color
+     ring          - Focus ring color
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   LIGHT THEME (default)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Semantic: Primary (Blue) */
+  --token-primary: var(--color-blue-600);
+  --token-primary-hover: var(--color-blue-700);
+  --token-primary-light: var(--color-blue-50);
+  --token-primary-foreground: var(--color-white);
+
+  /* Semantic: Secondary (Slate) */
+  --token-secondary: var(--color-slate-600);
+  --token-secondary-hover: var(--color-slate-700);
+  --token-secondary-light: var(--color-slate-100);
+  --token-secondary-foreground: var(--color-white);
+
+  /* Semantic: Tertiary (Violet) */
+  --token-tertiary: var(--color-violet-600);
+  --token-tertiary-hover: var(--color-violet-700);
+  --token-tertiary-light: var(--color-violet-50);
+  --token-tertiary-foreground: var(--color-white);
+
+  /* Semantic: Complementary (Amber) */
+  --token-complementary: var(--color-amber-500);
+  --token-complementary-hover: var(--color-amber-600);
+  --token-complementary-light: var(--color-amber-50);
+  --token-complementary-foreground: var(--color-black);
+
+  /* Semantic: Accent (Teal) */
+  --token-accent: var(--color-teal-600);
+  --token-accent-hover: var(--color-teal-700);
+  --token-accent-light: var(--color-teal-50);
+  --token-accent-foreground: var(--color-white);
+
+  /* Semantic: Neutral */
+  --token-neutral: var(--color-slate-500);
+  --token-neutral-hover: var(--color-slate-600);
+  --token-neutral-light: var(--color-slate-50);
+  --token-neutral-foreground: var(--color-white);
+
+  /* Semantic: Status */
+  --token-success: var(--color-green-600);
+  --token-success-light: var(--color-green-50);
+  --token-success-foreground: var(--color-white);
+
+  --token-warning: var(--color-amber-500);
+  --token-warning-light: var(--color-amber-50);
+  --token-warning-foreground: var(--color-black);
+
+  --token-error: var(--color-red-600);
+  --token-error-light: var(--color-red-50);
+  --token-error-foreground: var(--color-white);
+
+  /* Component: Surfaces */
+  --token-bg: var(--color-slate-50);
+  --token-surface: var(--color-white);
+  --token-surface-alt: var(--color-slate-100);
+
+  /* Component: Typography */
+  --token-text: var(--color-slate-900);
+  --token-text-muted: var(--color-slate-500);
+
+  /* Component: Borders & Focus */
+  --token-border: var(--color-slate-200);
+  --token-ring: var(--color-blue-500);
+}
+
+/* --------------------------------------------------------------------------
+   DARK THEME
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Semantic: Primary (Blue) */
+  --token-primary: var(--color-blue-500);
+  --token-primary-hover: var(--color-blue-400);
+  --token-primary-light: var(--color-blue-950);
+  --token-primary-foreground: var(--color-white);
+
+  /* Semantic: Secondary (Slate) */
+  --token-secondary: var(--color-slate-400);
+  --token-secondary-hover: var(--color-slate-300);
+  --token-secondary-light: var(--color-slate-800);
+  --token-secondary-foreground: var(--color-slate-900);
+
+  /* Semantic: Tertiary (Violet) */
+  --token-tertiary: var(--color-violet-400);
+  --token-tertiary-hover: var(--color-violet-300);
+  --token-tertiary-light: var(--color-violet-950);
+  --token-tertiary-foreground: var(--color-white);
+
+  /* Semantic: Complementary (Amber) */
+  --token-complementary: var(--color-amber-400);
+  --token-complementary-hover: var(--color-amber-300);
+  --token-complementary-light: var(--color-amber-950);
+  --token-complementary-foreground: var(--color-black);
+
+  /* Semantic: Accent (Teal) */
+  --token-accent: var(--color-teal-400);
+  --token-accent-hover: var(--color-teal-300);
+  --token-accent-light: var(--color-teal-950);
+  --token-accent-foreground: var(--color-black);
+
+  /* Semantic: Neutral */
+  --token-neutral: var(--color-slate-400);
+  --token-neutral-hover: var(--color-slate-300);
+  --token-neutral-light: var(--color-slate-800);
+  --token-neutral-foreground: var(--color-slate-900);
+
+  /* Semantic: Status */
+  --token-success: var(--color-green-400);
+  --token-success-light: var(--color-green-950);
+  --token-success-foreground: var(--color-black);
+
+  --token-warning: var(--color-amber-400);
+  --token-warning-light: var(--color-amber-950);
+  --token-warning-foreground: var(--color-black);
+
+  --token-error: var(--color-red-400);
+  --token-error-light: var(--color-red-950);
+  --token-error-foreground: var(--color-black);
+
+  /* Component: Surfaces */
+  --token-bg: var(--color-slate-950);
+  --token-surface: var(--color-slate-900);
+  --token-surface-alt: var(--color-slate-800);
+
+  /* Component: Typography */
+  --token-text: var(--color-slate-50);
+  --token-text-muted: var(--color-slate-400);
+
+  /* Component: Borders & Focus */
+  --token-border: var(--color-slate-700);
+  --token-ring: var(--color-blue-400);
+}
+
+/* --------------------------------------------------------------------------
+   OCEAN THEME
+   -------------------------------------------------------------------------- */
+[data-theme="ocean"] {
+  color-scheme: dark;
+
+  /* Semantic: Primary (Teal) */
+  --token-primary: var(--color-teal-500);
+  --token-primary-hover: var(--color-teal-400);
+  --token-primary-light: var(--color-teal-950);
+  --token-primary-foreground: var(--color-white);
+
+  /* Semantic: Secondary (Slate-blue blend) */
+  --token-secondary: var(--color-slate-400);
+  --token-secondary-hover: var(--color-slate-300);
+  --token-secondary-light: var(--color-slate-800);
+  --token-secondary-foreground: var(--color-slate-900);
+
+  /* Semantic: Tertiary (Blue) */
+  --token-tertiary: var(--color-blue-400);
+  --token-tertiary-hover: var(--color-blue-300);
+  --token-tertiary-light: var(--color-blue-950);
+  --token-tertiary-foreground: var(--color-white);
+
+  /* Semantic: Complementary (Amber) */
+  --token-complementary: var(--color-amber-400);
+  --token-complementary-hover: var(--color-amber-300);
+  --token-complementary-light: var(--color-amber-950);
+  --token-complementary-foreground: var(--color-black);
+
+  /* Semantic: Accent (Violet) */
+  --token-accent: var(--color-violet-400);
+  --token-accent-hover: var(--color-violet-300);
+  --token-accent-light: var(--color-violet-950);
+  --token-accent-foreground: var(--color-white);
+
+  /* Semantic: Neutral */
+  --token-neutral: var(--color-slate-400);
+  --token-neutral-hover: var(--color-slate-300);
+  --token-neutral-light: var(--color-slate-800);
+  --token-neutral-foreground: var(--color-slate-900);
+
+  /* Semantic: Status */
+  --token-success: var(--color-green-400);
+  --token-success-light: var(--color-green-950);
+  --token-success-foreground: var(--color-black);
+
+  --token-warning: var(--color-amber-400);
+  --token-warning-light: var(--color-amber-950);
+  --token-warning-foreground: var(--color-black);
+
+  --token-error: var(--color-red-400);
+  --token-error-light: var(--color-red-950);
+  --token-error-foreground: var(--color-black);
+
+  /* Component: Surfaces -- deep ocean blues */
+  --token-bg: #0a1628;
+  --token-surface: #0f2035;
+  --token-surface-alt: #142a42;
+
+  /* Component: Typography */
+  --token-text: var(--color-slate-50);
+  --token-text-muted: var(--color-teal-300);
+
+  /* Component: Borders & Focus */
+  --token-border: #1e3a5f;
+  --token-ring: var(--color-teal-400);
+}

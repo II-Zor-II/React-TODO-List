@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/themes.css";
+
+/* ==========================================================================
+   Tailwind v4 Theme Configuration
+   ==========================================================================
+   Extends Tailwind with custom breakpoints and semantic color tokens.
+   In v4, this replaces tailwind.config.ts entirely.
+   ========================================================================== */
+
+@theme {
+  /* --- Custom Breakpoints --- */
+  --breakpoint-2k: 2048px;
+  --breakpoint-4k: 3840px;
+
+  /* --- Semantic Colors (mapped from CSS custom properties) --- */
+  /* Primary */
+  --color-primary: var(--token-primary);
+  --color-primary-hover: var(--token-primary-hover);
+  --color-primary-light: var(--token-primary-light);
+  --color-primary-foreground: var(--token-primary-foreground);
+
+  /* Secondary */
+  --color-secondary: var(--token-secondary);
+  --color-secondary-hover: var(--token-secondary-hover);
+  --color-secondary-light: var(--token-secondary-light);
+  --color-secondary-foreground: var(--token-secondary-foreground);
+
+  /* Tertiary */
+  --color-tertiary: var(--token-tertiary);
+  --color-tertiary-hover: var(--token-tertiary-hover);
+  --color-tertiary-light: var(--token-tertiary-light);
+  --color-tertiary-foreground: var(--token-tertiary-foreground);
+
+  /* Complementary */
+  --color-complementary: var(--token-complementary);
+  --color-complementary-hover: var(--token-complementary-hover);
+  --color-complementary-light: var(--token-complementary-light);
+  --color-complementary-foreground: var(--token-complementary-foreground);
+
+  /* Accent */
+  --color-accent: var(--token-accent);
+  --color-accent-hover: var(--token-accent-hover);
+  --color-accent-light: var(--token-accent-light);
+  --color-accent-foreground: var(--token-accent-foreground);
+
+  /* Neutral */
+  --color-neutral: var(--token-neutral);
+  --color-neutral-hover: var(--token-neutral-hover);
+  --color-neutral-light: var(--token-neutral-light);
+  --color-neutral-foreground: var(--token-neutral-foreground);
+
+  /* Status */
+  --color-success: var(--token-success);
+  --color-success-light: var(--token-success-light);
+  --color-success-foreground: var(--token-success-foreground);
+
+  --color-warning: var(--token-warning);
+  --color-warning-light: var(--token-warning-light);
+  --color-warning-foreground: var(--token-warning-foreground);
+
+  --color-error: var(--token-error);
+  --color-error-light: var(--token-error-light);
+  --color-error-foreground: var(--token-error-foreground);
+
+  /* Surfaces */
+  --color-bg: var(--token-bg);
+  --color-surface: var(--token-surface);
+  --color-surface-alt: var(--token-surface-alt);
+
+  /* Typography */
+  --color-text: var(--token-text);
+  --color-text-muted: var(--token-text-muted);
+
+  /* Borders & Focus */
+  --color-border: var(--token-border);
+  --color-ring: var(--token-ring);
+}
+
+/* ==========================================================================
+   Base Layer
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--token-border);
+  }
+
+  body {
+    background-color: var(--token-bg);
+    color: var(--token-text);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+      sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", "Noto Color Emoji";
+  }
+
+  /* Visible focus ring for keyboard navigation (AA compliance) */
+  :focus-visible {
+    outline: 2px solid var(--token-ring);
+    outline-offset: 2px;
+  }
+
+  /* Remove default focus outline; :focus-visible handles keyboard */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* ==========================================================================
+   2k/4k Scaling
+   ==========================================================================
+   At ultra-high resolutions, scale base font and cap content width
+   to maintain readability and visual proportion.
+   ========================================================================== */
+
+@media (min-width: 2048px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 3840px) {
+  html {
+    font-size: 22px;
+  }
+}
