@@ -1,0 +1,22 @@
+/* ==========================================================================
+   Font Switching
+   ==========================================================================
+   Mirrors the theme system: the active font is determined by the
+   data-font attribute on <html>, which sets --font-body accordingly.
+
+   To add a new font, add a [data-font="<key>"] rule below that maps
+   --font-body to the matching CSS variable from next/font/google.
+   ========================================================================== */
+
+:root,
+[data-font="montserrat"] {
+  --font-body: var(--font-montserrat), sans-serif;
+}
+
+[data-font="source-code-pro"] {
+  --font-body: var(--font-source-code-pro), monospace;
+}
+
+[data-font="cormorant-garamond"] {
+  --font-body: var(--font-cormorant-garamond), serif;
+}

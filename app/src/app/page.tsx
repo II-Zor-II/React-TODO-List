@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { FontToggle } from "@/components/font/font-toggle";
 import { TodoComposer } from "@/features/todos/components/todo-composer";
 import { TodoFilters } from "@/features/todos/components/todo-filters";
 import { TodoList } from "@/features/todos/components/todo-list";
@@ -86,7 +87,10 @@ export default function HomePage() {
             {counts.active} {counts.active === 1 ? "task" : "tasks"} remaining
           </p>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <FontToggle />
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Add new todo */}
